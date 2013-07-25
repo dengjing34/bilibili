@@ -1,9 +1,6 @@
-/cache/*
-/upload/*
-/nbproject/*
+nbproject/*
 */config/*
 !*/config/*.sample.php
-!*/config/init.php
 # Logs and databases #
 ######################
 *.log
