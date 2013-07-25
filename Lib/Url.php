@@ -8,11 +8,13 @@ class Url {
     private $request;
     private $segments = array();
     private static $instances = array();
+    private $host;
     
     private function __construct() {
         $this->get = $_GET;
         $this->post = $_POST;
         $this->request = $_REQUEST;
+        $this->host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
     }
 
     private function __clone() {
@@ -29,6 +31,42 @@ class Url {
             self::$instances[$className] = new $className();
         }
         return self::$instances[$className];
+    }
+
+    /**
+     * 生成链接地址 不传递$uri则是首页地址
+     * @param string $uri 链接的uri段
+     * @return string 生成的url
+     */
+    public function link($uri = '') {
+        return $this->host ? 'http://' . $this->host . '/' . $uri : '/';
+    }
+
+    /**
+     * 静态文件夹的url
+     * @param string $subfolder 静态文件子文件夹
+     * @return string 
+     */
+    public function staticUrl($subfolder = '') {
+        return $this->link('static/' . $subfolder);
+    }
+
+    /**
+     * css文件夹的url
+     * @param string $css css文件名或子路径
+     * @return sring
+     */
+    public function cssUrl($css = '') {
+        return $this->staticUrl('css/' . $css);
+    }
+
+    /**
+     * js文件夹的url
+     * @param sring $js js文件名或子路径
+     * @return sring
+     */
+    public function jsUlr($js = '') {
+        return $this->staticUrl('js/' . $js);
     }
 
     /**
@@ -205,7 +243,7 @@ class Url {
     }
 
     /**
-     * 获取uri各段购车给你的数组
+     * 获取uri各段购成的数组
      * @return array
      */
     public function segments() {

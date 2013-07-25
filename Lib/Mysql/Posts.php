@@ -10,6 +10,7 @@ class Posts extends Data {
         self::STATUS_INACTIVE => '冻结',
     );
     const TABLE_NAME = 'posts';
+    //TODO 加一级分类的id,中英文,点击次数
     public function __construct() {
         $options = array(
             'db' => MYSQL_DBNAME_CITYMV,

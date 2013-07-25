@@ -20,6 +20,8 @@ abstract class Controller {
      */
     private $_view_;
 
+    private $prependStatic = array(), $appendStatic = array();
+
     public function __construct() {
         
     }
@@ -64,18 +66,88 @@ abstract class Controller {
 
     /**
      * 获取controller需要的模版对象
+     * @param array $data 初始化时模版时给模版赋值
      * @return \Lib\View
      */
-    protected function getView() {
+    protected function getView(array $data = array()) {
         if (is_null($this->_view_)) {
-            $this->_view_ = new View();
+            $this->_view_ = new View($data);
         }
         return $this->_view_;
     }
 
     /**
+     * 设置顶部静态文件
+     * @param array $files 静态文件数组
+     * <pre>
+     * array(
+     * &nbsp;&nbsp;'css' => array('x.css', 'y.css', 'z.css'),
+     * &nbsp;&nbsp;'js' => array('a.js', 'b.js', 'c.css'),
+     * )
+     * </pre>
+     * @return \Lib\Controller
+     */
+    protected function prependStatic(array $files) {
+        foreach ($files as $type => $file) {
+            foreach ($file as $eachFile) {
+                $this->prependStatic[$type][] = $eachFile;
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * 获取顶部静态文件配置
+     * @return array 静态文件数组
+     * <pre>
+     * array(
+     * &nbsp;&nbsp;'css' => array('x.css', 'y.css', 'z.css'),
+     * &nbsp;&nbsp;'js' => array('a.js', 'b.js', 'c.css');
+     * )
+     * </pre>
+     */
+    protected function getPrependStatic() {
+        return $this->prependStatic;
+    }
+
+    /**
+     * 设置底部静态文件
+     * @param array $files 静态文件数组
+     * <pre>
+     * array(
+     * &nbsp;&nbsp;'css' => array('x.css', 'y.css', 'z.css'),
+     * &nbsp;&nbsp;'js' => array('a.js', 'b.js', 'c.css'),
+     * )
+     * </pre>
+     * @return \Lib\Controller
+     */
+    protected function appendStatic(array $files) {
+        foreach ($files as $type => $file) {
+             foreach ($file as $eachFile) {
+                $this->appendStatic[$type][] = $eachFile;
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * 获取底部静态文件配置
+     * @return array 静态文件数组
+     * <pre>
+     * array(
+     * &nbsp;&nbsp;'css' => array('x.css', 'y.css', 'z.css'),
+     * &nbsp;&nbsp;'js' => array('a.js', 'b.js', 'c.css');
+     * )
+     * </pre>
+     */
+    protected function getAppentStatic() {
+        return $this->appendStatic;
+    }
+
+    /**
      * 调用模版文件
      * @param array $data 需要传入模版的参数
+     * @param boolean $print 是否打印出内容
      * @param string $tpl 模版文件路径,只需要传递*.tpl.php中的*
      */
     protected function render(array $data = array(), $print = true, $tpl = null) {
@@ -84,12 +156,13 @@ abstract class Controller {
             $foldersStr = implode('/', $folders);
             $lastFolder = !empty($folders) ? end($folders) : '';
             $controllClassName = $this->_site_->getController();
-            if (empty($folders) || ucfirst($lastFolder) . '_Controller' == $controllClassName) {
+            if (empty($folders)) {
+                $tpl = $this->_site_->getMethod();
+            } elseif (ucfirst($lastFolder) . '_Controller' == $controllClassName) {
                 $tpl = $foldersStr . '/' . $this->_site_->getMethod();
             } else {
                 $tpl = $foldersStr . '/' . lcfirst(str_replace('_Controller', '', $controllClassName)) . '/' . $this->_site_->getMethod();
             }
-            echo $tpl;
         }
         $view = $this->getView()->set($data)->setPrint($print);
         if ($print) {

@@ -7,6 +7,7 @@ class View {
     private $name = null, $print = false;
     protected $data = array();
     private $render = null;
+    private static $_url_;
 
     public function __construct($data = null) {
         if (is_array($data) AND !empty($data)) {
@@ -14,6 +15,18 @@ class View {
             $this->data = array_merge($this->data, $data);
         }
     }
+
+    /**
+     * 获取url对象
+     * @return \Lib\Url
+     */
+    public function url() {
+       if (is_null(self::$_url_)) {
+           self::$_url_ = Url::instance();
+       }
+       return self::$_url_;
+    }
+
 
     /**
      * Sets a view variable.

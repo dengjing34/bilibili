@@ -1,6 +1,14 @@
+<?php
+/*@var $this \Lib\View*/
+?>
 
         </div>
     </body>
 </html>
-<script type="text/javascript" src="static/js/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+<?php
+if (isset($appendStatic['js'])) {
+    foreach ($appendStatic['js'] as $eachJs) {
+        echo '<script type="text/javascript" src="' . $this->url()->jsUlr($eachJs) . '"/></script>' . "\n";
+    }
+}
+?>
