@@ -1,8 +1,6 @@
 nbproject/*
-*/config/*
-!*/config/*.sample.php
-# Logs and databases #
-######################
+Public/www.citymv.com/config/*
+!Public/www.citymv.com/config/*.sample.php
 *.log
 *.sql
 *.sqlite
