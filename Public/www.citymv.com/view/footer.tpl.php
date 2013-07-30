@@ -2,9 +2,8 @@
 /*@var $this \Lib\View*/
 ?>
 
+
         </div>
-    </body>
-</html>
 <?php
 if (isset($appendStatic['js'])) {
     foreach ($appendStatic['js'] as $eachJs) {
@@ -12,3 +11,5 @@ if (isset($appendStatic['js'])) {
     }
 }
 ?>
+    </body>
+</html>

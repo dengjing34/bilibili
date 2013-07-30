@@ -353,7 +353,7 @@ abstract class Searcher {
         //$pattern = '/^\d{4}-([0][1-9]|1[012])-([012][0-9]|3[01])$|^\d{4}-([0][1-9]|1[012])-([012][0-9]|3[01])\s([01][0-9]|2[0123]):[0-5][0-9](:[0-5][0-9])?$|^\*$/';
         if (strlen(trim($startDateTime)) == 0) $startDateTime = '*';
         if (strlen(trim($endDateTime)) == 0) $endDateTime = '*';
-        if (($startDateTimeStamp = strtotime($startDateTime) || $startDateTime = '*') && ($endDateTimeStamp = strtotime($endDateTime) || $endDateTime == '*')) {
+        if ((($startDateTimeStamp = strtotime($startDateTime)) || $startDateTime = '*') && (($endDateTimeStamp = strtotime($endDateTime)) || $endDateTime == '*')) {
             $startDateTime = $startDateTime != '*' ? $startDateTimeStamp : $startDateTime;
             $endDateTime = $endDateTime != '*' ? $endDateTimeStamp : $endDateTime;
             $this->rangeQuery($field, $startDateTime, $endDateTime);

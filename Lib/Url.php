@@ -230,7 +230,7 @@ class Url {
      * 用户请求的客户端信息
      * @return string
      */
-    public function userAgern() {
+    public function userAgent() {
         return $_SERVER['HTTP_USER_AGENT'];
     }
 

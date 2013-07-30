@@ -33,7 +33,7 @@ class View {
      *
      * @param   string|array  name of variable or an array of variables
      * @param   mixed         value when using a named variable
-     * @return  object
+     * @return  \Lib\View
      */
     public function set($name, $value = null) {
         if (is_array($name)) {

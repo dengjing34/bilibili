@@ -5,7 +5,7 @@ namespace Controller;
  *
  * @author dengjing
  */
-class Base_Controller extends \Lib\Controller{
+abstract class Base_Controller extends \Lib\Controller{
 
     public function __construct() {
         parent::__construct();

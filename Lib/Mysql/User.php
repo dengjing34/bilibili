@@ -5,6 +5,8 @@ class User extends Data {
     const TABLE_NAME = 'user';
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
+    const COOKIE_USER_ID = 'uid';
+    const COOKIE_USER_NICKNAME = 'nickname';
     public static $statusText = array(
         self::STATUS_ACTIVE => '有效',
         self::STATUS_INACTIVE => '无效',
@@ -130,6 +132,121 @@ class User extends Data {
         $user = new $className();
         $user->email = $email;
         return current($user->find(array('limit' => 1)));
+    }
+
+    /**
+     * 获取cookie中userId的key
+     * @return string
+     */
+    public static function cookieUserId() {
+        return self::COOKIE_USER_ID;
+    }
+
+    /**
+     * 获取cookie中userNickname的key
+     * @return string
+     */
+    public static function cookieUserNickname() {
+        return self::COOKIE_USER_NICKNAME;
+    }
+
+    /**
+     * 是否登录
+     * @return boolean true为已经登录, false为未登录
+     */
+    public static function isLogin() {
+        $result = false;
+        if (\Lib\Cookie::get(self::cookieUserId()) && \Lib\Cookie::get(self::cookieUserNickname())) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * 验证用户登录
+     * @param array $user 包含nickname,passowrd的数组
+     * @return \Lib\Mysql\User 验证登录成功返回user对象, 失败抛出异常
+     * @throws \Exception
+     */
+    public static function validateLogin(array $user) {
+        $required = array(
+            'nickname' => '昵称',
+            'password' => '密码',
+        );
+        $error = array();
+        foreach ($required as $key => $text) {
+            if (!isset($user[$key]) || (isset($user[$key]) && strlen(trim($user[$key])) == 0)) {
+                $error[] = $text;
+            }
+        }
+        if (!empty($error)) {
+            throw new \Exception('[' . implode('], [', $error) . '] 不能为空');
+        }
+        /*@var $user \Lib\Mysql\User*/
+        if (($u = self::loadByNickname($user['nickname'])) && $u->validatePassword($user['password'])) {
+            \Lib\Cookie::set(self::cookieUserId(), $u->id, 86400);
+            \Lib\Cookie::set(self::cookieUserNickname(), $u->nickname, 86400);
+        } else {
+            throw new \Exception('用户名密码不正确');
+        }
+        return $u;
+    }
+
+    public static function logout() {
+        \Lib\Cookie::delete(self::cookieUserId());
+        \Lib\Cookie::delete(self::cookieUserNickname());
+    }
+
+    /**
+     * 获取登录用户信息
+     * @return array 包含id,nickname的数组
+     */
+    public static function getLoginUser() {
+        return array(
+            'id' => \Lib\Cookie::get(self::cookieUserId()),
+            'nickname' => \Lib\Cookie::get(self::cookieUserNickname()),
+        );
+    }
+
+    /**
+     * 重新写入登录用户cookie,一般在后台修改了用户昵称时需要用到
+     * @param array $user array 包含id和nickname的数组
+     * @return boolean 修改成功返回true,失败返回false
+     */
+    public static function setLoginUser(array $user) {
+        $result = false;
+        if (isset($user['id']) && ctype_digit($user['id']) && isset($user['nickname']) && $user['nickname']) {
+            \Lib\Cookie::set(self::cookieUserId(), $user['id']);
+            \Lib\Cookie::set(self::cookieUserNickname(), $user['nickname']);
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * 创建时间
+     * @param string $fmt 时间格式
+     * @return string
+     */
+    public function createdTime($fmt = 'Y-m-d H:i:s') {
+        return date($fmt, $this->createdTime);
+    }
+
+    /**
+     * 更新时间
+     * @param string $fmt 时间格式
+     * @return string
+     */
+    public function updatedTime($fmt = 'Y-m-d H:i:s') {
+        return date($fmt, $this->updatedTime);
+    }
+
+    /**
+     * 获取用户状态描述
+     * @return string
+     */
+    public function getStatus() {
+        return self::$statusText[$this->status];
     }
 }
 

@@ -1,4 +1,6 @@
 nbproject/*
+Public/www.citymv.com/static/js/editor/attached/*
+Public/www.citymv.com/files/*
 Public/www.citymv.com/config/*
 !Public/www.citymv.com/config/*.sample.php
 *.log

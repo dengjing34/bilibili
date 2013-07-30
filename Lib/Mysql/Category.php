@@ -2,9 +2,10 @@
 namespace Lib\Mysql;
 class Category extends Data {
     public $id, $name, $englishName, $parentId, $level, $path, $status, $createdTime, $updatedTime;
-    const TABLE_NAME = 'category';
+    const TABLE_NAME = 'category_test';
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
+    const APC_KEY_CATEGORIES = 'categories';
     public static $statusText = array(
         self::STATUS_ACTIVE => '有效',
         self::STATUS_INACTIVE => '无效',
@@ -71,8 +72,12 @@ class Category extends Data {
             $this->path = '';
             $this->level = 1;
             parent::save();
-            $this->path = $this->id;    
-            $this->getPathLevel($this->parentId);
+            $this->path = $this->id;
+            try {
+                $this->getPathLevel($this->parentId);
+            } catch (\Exception $e) {
+                throw new \Exception($e->getMessage());
+            }
         } else {
             if ($sameNameCategory && $sameNameCategory->id != $this->id) {
                 throw new \Exception("分类中文名 [{$this->name}] 已存在");
@@ -81,7 +86,15 @@ class Category extends Data {
                 throw new \Exception("分类英文名 [{$this->englishName}] 已存在");
             }
             $this->updatedTime = time();
+            $this->level = 1;
+            $this->path = $this->id;
+            try {
+                $this->getPathLevel($this->parentId);
+            } catch (\Exception $e) {
+                throw new \Exception($e->getMessage());
+            }
         }
+        $this->apcInstance()->delete($this->cacheKey(self::APC_KEY_CATEGORIES));
         return parent::save();
     }
 
@@ -101,7 +114,9 @@ class Category extends Data {
             $this->level++;
             $this->getPathLevel($category->parentId);
         } catch (\Exception $e) {
-            
+            if ($parentId > 0) {
+                throw new \Exception("父类Id : [{$parentId}] 不存在");
+            }
         }
         unset($category);
         return $this;
@@ -132,6 +147,106 @@ class Category extends Data {
         $category = new $className();
         $category->englishName = $englishName;
         return current($category->find(array('limit' => 1)));
+    }
+
+    /**
+     * 根据$this->parentId查出父类的对象
+     * @return \Lib\Mysql\Category 父类对象
+     * @throws \Exception
+     */
+    public function getParentCategory() {
+        $className = $this->className();
+        /*@var $category \Lib\Mysql\Category*/
+        $category = new $className();
+        try {
+            $category->load($this->parentId);
+        } catch (\Exception $e) {
+            throw new \Exception('category parentId : ' . $e->getMessage());
+        }
+        return $category;
+    }
+
+    /**
+     * 创建时间
+     * @param string $fmt 时间格式
+     * @return string
+     */
+    public function createdTime($fmt = 'Y-m-d H:i:s') {
+        return date($fmt, $this->createdTime);
+    }
+
+    /**
+     * 更新时间
+     * @param string $fmt 时间格式
+     * @return string
+     */
+    public function updatedTime($fmt = 'Y-m-d H:i:s') {
+        return date($fmt, $this->updatedTime);
+    }
+
+    /**
+     * 获取用户状态描述
+     * @return string
+     */
+    public function getStatus() {
+        return self::$statusText[$this->status];
+    }
+
+    /**
+     * 获取所有分类数据
+     * @param int $parentId 默认是0,从顶级开始查询
+     * @param int $recursion 递归查询次数 默认是1次, 若为-1则是递归查询所有children
+     * @return array
+     */
+    public static function children($parentId = 0, $recursion = 1) {
+        $className = get_called_class();
+        /*@var $category \Lib\Mysql\Category*/
+        $category = new $className();
+        $category->parentId = $parentId;
+        $category->setActive();
+        $categories = $category->find(array(
+            'order' => array('id' => 'ASC')
+        ));
+        if ($recursion > 0 || $recursion == -1) {
+            foreach ($categories as $eachCategory) {
+                $eachCategory->children = self::children($eachCategory->id, $recursion > 0 ? $recursion - 1 : $recursion);
+            }
+        }
+        return $categories;
+    }
+
+    /**
+     * 获取所有的分类数据
+     * @return array
+     */
+    public function categories() {
+        $key = $this->cacheKey(self::APC_KEY_CATEGORIES);
+        $apc = $this->apcInstance();
+        if (($categories = $apc->get($key)) === false) {
+            $categories = self::children(0, 1);
+            $apc->set($key, $categories);
+        }
+        return $categories;
+    }
+
+    /**
+     * 获取全部分类的表单下拉选择控件html
+     * @param string $name 表单控件名字
+     * @param int $selectedId 默认选中的二级分类
+     * @return string
+     */
+    public function categoriesFormSelect($name, $selectedId = 0) {
+        $categories = $this->categories();
+        $result = "<select required=\"required\" name=\"{$name}\" id=\"{$name}\"><option value=\"\">--请选择--</option>";
+        foreach ($categories as $firstCategory) {
+            $result .= "<optgroup label=\"{$firstCategory->name}\">";
+            foreach ($firstCategory->children as $secondCategory) {
+                $selected = $selectedId == $secondCategory->id ? ' selected="selected"' : '';
+                $result .= "<option{$selected} value=\"{$secondCategory->id}\">{$secondCategory->name}</option>";
+            }
+        }
+        $result .= '</select>';
+        return $result;
     }
 
 }

@@ -15,7 +15,7 @@
         }
         if (isset($prependStatic['js'])) {
             foreach ($prependStatic['js'] as $eachJs) {
-                echo '<script type="text/javscript" src="' . $this->url()->jsUlr($eachJs) . '"/>' . "\n";
+                echo '<script type="text/javascript" src="' . $this->url()->jsUlr($eachJs) . '"></script>' . "\n";
             }
         }
         ?>

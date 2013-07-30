@@ -22,6 +22,21 @@ abstract class Controller {
 
     private $prependStatic = array(), $appendStatic = array();
 
+    /**
+     * 页面的meta信息,包含keywords, description
+     * @var array
+     */
+    private $_meta_ = array(
+        'keywords' => '',
+        'description' => '',
+    );
+    
+    /**
+     * 页面的标题
+     * @var string
+     */
+    private $_title_;
+
     public function __construct() {
         
     }
@@ -127,6 +142,95 @@ abstract class Controller {
                 $this->appendStatic[$type][] = $eachFile;
             }
         }
+        return $this;
+    }
+
+
+    /**
+     * 页面的meta信息
+     * @return array 包含keywords, description
+     */
+    protected function getMeta() {
+        return $this->_meta_;
+    }
+
+    /**
+     * 给页面meta信息的文本前面添加内容
+     * @param array $meta 可以包含keywords,description的数组
+     * @return \Lib\Controller
+     */
+    protected function prependMeta(array $meta) {
+        foreach (array_keys($this->_meta_) as $key) {
+            if (isset($meta[$key])) {
+                $this->_meta_[$key] = $meta[$key] . $this->_meta_[$key];
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * 给页面meta信息的文本后面添加内容
+     * @param array $meta 可以包含keywords,description的数组
+     * @return \Lib\Controller
+     */
+    protected function appendMeta(array $meta) {
+        foreach (array_keys($this->_meta_) as $key) {
+            if (isset($meta[$key])) {
+                $this->_meta_[$key] .= $meta[$key];
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * 给页面meta信息的设置内容, 会直接覆盖之前的设置
+     * @param array $meta 可以包含keywords,description的数组
+     * @return \Lib\Controller
+     */
+    protected function setMeta(array $meta) {
+        foreach (array_keys($this->_meta_) as $key) {
+            if (isset($meta[$key])) {
+                $this->_meta_[$key] = $meta[$key];
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * 获取页面标题
+     * @return string
+     */
+    protected function getTitle() {
+        return $this->_title_;
+    }
+
+/**
+     * 在页面标题前面添加内容
+     * @param array $title 标题信息
+     * @return \Lib\Controller
+     */
+    protected function prependTitle($title) {
+        $this->_title_ = $title . $this->_title_;
+        return $this;
+    }
+
+    /**
+     * 在页面标题后面添加内容
+     * @param array $title 标题信息
+     * @return \Lib\Controller
+     */
+    protected function appendTitle($title) {
+        $this->_title_ .= $title;
+        return $this;
+    }
+
+    /**
+     * 设置页面标题,会直接覆盖之前的设置
+     * @param array $title 页面标题
+     * @return \Lib\Controller
+     */
+    protected function setTitle($title) {
+        $this->_title_ = $title;
         return $this;
     }
 

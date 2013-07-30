@@ -10,6 +10,7 @@ abstract class Data {
     private static $connections = array(), $dbs = array(), $searchers = array(), $appendWhere = array(), $sql = array(), $result = array();
     private static $columns = array(), $tables = array(), $keys = array(), $required = array();
     private static $switchMaster = false, $showSql = false;
+    private static $memcache, $apc;
 
     /**
      * 初始化配置
@@ -174,11 +175,11 @@ abstract class Data {
     }
 
     /**
-     * 生成mysql类的memcache key
+     * 生成mysql类的memcache或apc key
      * @param string|array $key 要存储的key,可以是数组或字符,不能为空
      * @return string|null
      */
-    private function cacheKey($key) {
+    protected function cacheKey($key) {
         $className = $this->className();
         $prefix = self::CACHE_PREFIX . self::$dbs[$className] . "_{$this->table()}_";
         if (is_scalar($key) && $key) {
@@ -189,30 +190,55 @@ abstract class Data {
                     }, $key);
         } else {
             return null;
-        }
+        }        
     }
+
+    protected static function genKey($key) {
+        $className = get_called_class();
+        $prefix = self::CACHE_PREFIX . "{$className}_";
+        if (is_scalar($key)) {
+            return $prefix . $key;
+        } elseif (is_array($key)) {
+            return array_map(function($v) use ($prefix) {
+                return $prefix . $v;
+            }, $key);
+        }
+        return null;
+    }
+
+    /**
+     * 获取apc实例
+     * @return \Lib\Apc
+     */
+    protected function apcInstance() {
+        if (is_null(self::$apc)) {
+            self::$apc = \Lib\Apc::instance();
+        }
+        return self::$apc;
+    }
+
 
     /**
      * 获取Cache的实例
      * @return \Lib\Cache
      */
-    private function cacheInstance() {
+    protected function cacheInstance() {
         return \Lib\Cache::instance();
     }
 
-    private function cacheGet($key) {
+    protected function cacheGet($key) {
         return $this->cacheInstance()->get($this->cacheKey($key));
     }
 
-    private function cacheSet($key, $value) {
+    protected function cacheSet($key, $value) {
         return $this->cacheInstance()->set($this->cacheKey($key), $value);
     }
 
-    private function cacheDel($key) {
+    protected function cacheDel($key) {
         return $this->cacheInstance()->delete($this->cacheKey($key));
     }
 
-    private function cacheGetMulti($keys) {
+    protected function cacheGetMulti($keys) {
         return $this->cacheInstance()->getMulti($this->cacheKey($keys));
     }
 
