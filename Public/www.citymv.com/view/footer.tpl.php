@@ -11,5 +11,12 @@ if (isset($appendStatic['js'])) {
     }
 }
 ?>
+<script type="text/javascript">
+$(function(){
+    $('.nav-tabs > li > a').hover( function(){
+      $(this).tab('show');
+   });
+});
+</script>
     </body>
 </html>

@@ -29,7 +29,7 @@ abstract class Admin_Controller extends \Lib\Controller {
         $authUri = 'bilibili/auth';
         $uri = $url->uri();
         $isLogin = \Lib\Mysql\User::isLogin();
-        if (!$isLogin && $uri !=  '/' . $authUri) {
+        if (!$isLogin && $uri != '/' . $authUri) {
             $url->redirect($url->link($authUri));
         } elseif ($isLogin && $uri == '/' . $authUri) {
             $url->redirect($url->link('bilibili'));

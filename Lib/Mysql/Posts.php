@@ -162,6 +162,14 @@ class Posts extends Data {
     public function getStatus() {
         return self::$statusText[$this->status];
     }
+
+    /**
+     * 获取post的链接地址
+     * @return string
+     */
+    public function postUrl() {
+        return $this->categoryEnglishName . '/a' . $this->id . '.html';
+    }
 }
 
 ?>

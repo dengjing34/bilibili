@@ -59,59 +59,57 @@ class Site {
      */
     private function setContrllerMethod() {
         $uri = $this->url->uri();
-        if (!empty($this->router)) {
-            foreach ($this->router as $pattern => $controller) {
-                if (preg_match($pattern, $uri, $matches)) {
-                    $controllerInfo = explode('/', current(array_keys($controller)));
-                    $controllerName = array_pop($controllerInfo);
-                    $this->folders = $controllerInfo;
-                    $dirInfo = empty($this->folders) ? '' : implode('/', $this->folders) . '/';
-                    $this->controllerPath = $this->controllerFilePath($dirInfo . $this->controllerFileName($controllerName));
-                    $this->controller = $this->controllerClassName($controllerName);
-                    $this->method = current($controller);
-                    foreach ($matches as $matchKey => $matchValue) {
-                        if (!ctype_digit((string)$matchKey)) {
-                            $this->url->setGet($matchKey, $matchValue);
+        $segments = $this->url->segments();
+        if (!empty($segments)) {
+            foreach ($segments as $key => $segment) {
+                $dir = '';
+                if (!empty($this->folders)) {
+                    $dir = implode('/', $this->folders) . '/';
+                }
+                $classFileName = $this->controllerFileName($segment);
+                $classFilePath = $this->controllerFilePath($dir . $classFileName);
+                $classDirPath = $this->controllerFilePath($dir . $segment);
+                if (is_file($classFilePath)) {
+                    $this->controller = $this->controllerClassName($segment);
+                    $this->method = isset($segments[$key + 1]) ? $segments[$key + 1] : 'index';
+                    $this->controllerPath = $classFilePath;
+                } elseif (is_dir($classDirPath)) {
+                    $this->folders[] = $segment;
+                }
+            }
+            if (is_null($this->controller) && !empty($this->folders)) {
+                $lastPath = end($this->folders);
+                $lastSegment = end($segments);
+                $this->controller = $this->controllerClassName($lastPath);
+                $this->controllerPath = $this->controllerFilePath(implode('/', $this->folders) . '/' . $this->controllerFileName($lastPath));
+                $this->method = $lastSegment == $lastPath ? 'index' : $lastSegment;
+            } elseif (is_null($this->controller) && !empty($this->router)) {
+                foreach ($this->router as $pattern => $controller) {
+                    if (preg_match($pattern, $uri, $matches)) {
+                        $controllerInfo = explode('/', current(array_keys($controller)));
+                        $controllerName = array_pop($controllerInfo);
+                        $this->folders = $controllerInfo;
+                        $dirInfo = empty($this->folders) ? '' : implode('/', $this->folders) . '/';
+                        $this->controllerPath = $this->controllerFilePath($dirInfo . $this->controllerFileName($controllerName));
+                        $this->controller = $this->controllerClassName($controllerName);
+                        $this->method = current($controller);
+                        foreach ($matches as $matchKey => $matchValue) {
+                            if (!ctype_digit((string)$matchKey)) {
+                                $this->url->setGet($matchKey, $matchValue);
+                            }
                         }
                     }
                 }
             }
-        }
-        if (is_null($this->controller) && is_null($this->method)) {
-            $segments = $this->url->segments();
-            if (!empty($segments)) {
-                foreach ($segments as $key => $segment) {
-                    $dir = '';
-                    if (!empty($this->folders)) {
-                        $dir = implode('/', $this->folders) . '/';
-                    }
-                    $classFileName = $this->controllerFileName($segment);
-                    $classFilePath = $this->controllerFilePath($dir . $classFileName);
-                    $classDirPath = $this->controllerFilePath($dir . $segment);
-                    if (is_file($classFilePath)) {
-                        $this->controller = $this->controllerClassName($segment);
-                        $this->method = isset($segments[$key + 1]) ? $segments[$key + 1] : 'index';
-                        $this->controllerPath = $classFilePath;
-                    } elseif (is_dir($classDirPath)) {
-                        $this->folders[] = $segment;
-                    }
-                }
-                if (is_null($this->controller) && !empty($this->folders)) {
-                    $lastPath = end($this->folders);
-                    $lastSegment = end($segments);
-                    $this->controller = $this->controllerClassName($lastPath);
-                    $this->controllerPath = $this->controllerFilePath(implode('/', $this->folders) . '/' . $this->controllerFileName($lastPath));
-                    $this->method = $lastSegment == $lastPath ? 'index' : $lastSegment;
-                } elseif (is_null($this->controller)) {
-                    $this->controller = 'Home_Controller';
-                    $this->method = current($segments);
-                    $this->controllerPath = $this->controllerFilePath($this->controllerFileName('home'));
-                }
-            } else {
+            if (is_null($this->controller)) {
                 $this->controller = 'Home_Controller';
-                $this->method = 'index';
+                $this->method = current($segments);
                 $this->controllerPath = $this->controllerFilePath($this->controllerFileName('home'));
             }
+        } else {
+            $this->controller = 'Home_Controller';
+            $this->method = 'index';
+            $this->controllerPath = $this->controllerFilePath($this->controllerFileName('home'));
         }
         if (($ajaxValue = $this->url->ajax())) {
             $this->method = $this->ajaxMethod($ajaxValue);
