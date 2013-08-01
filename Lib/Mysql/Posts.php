@@ -170,6 +170,71 @@ class Posts extends Data {
     public function postUrl() {
         return $this->categoryEnglishName . '/a' . $this->id . '.html';
     }
+
+    /**
+     * 获取指定截断字数的内容
+     * @param int $length 截取字符数量
+     * @return string
+     */
+    public function stripHtmlContent($length) {
+        return mb_strimwidth(strip_tags($this->content), 0 , $length, '...', 'UTF-8');
+    }
+
+    /**
+     * 获取tags构成的array
+     * @return array
+     */
+    public function tags() {
+        return explode(' ', $this->tags);
+    }
+
+    /**
+     * 根据config/imagick.php配置的缩略图尺寸获取缩略图地址
+     * @param string $size 配置的缩略图尺寸
+     * @return array 图片地址,没有则为空数组
+     */
+    private function picThumbs($size) {
+        $result = array();
+        if (($pics = $this->getPics())) {
+            try {
+                $wh = \Lib\Config::load('imagick.' . IMAGICK_EDITOR . '.thumb.' . $size);
+            } catch (\Exception $e) {
+                $wh = array();
+            }
+            if (!empty($wh)) {
+                foreach ($pics as $pic) {
+                    $picInfo = pathinfo($pic);
+                    $result[] = "{$picInfo['dirname']}/{$picInfo['filename']}_{$wh['width']}_{$wh['height']}.{$picInfo['extension']}";
+                }
+            }
+        }
+        return $result;
+    }
+
+
+    /**
+     * 获取64*64缩略图
+     * @return array 图片地址,没有则为空数组
+     */
+    public function picThumbsSmall() {
+        return $this->picThumbs('small');
+    }
+
+    /**
+     * 获取200*200缩略图
+     * @return array 图片地址,没有则为空数组
+     */
+    public function picThumbsMiddle() {
+        return $this->picThumbs('middle');
+    }
+
+    /**
+     * 获取所有图片路径构成的数组
+     * @return array
+     */
+    public function getPics() {
+        return ($pics = $this->get('pics')) ? explode(',', $pics) : array();
+    }
 }
 
 ?>

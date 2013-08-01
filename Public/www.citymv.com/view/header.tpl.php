@@ -28,7 +28,7 @@ $currFirstCategory = $currSecondCategory = null;
     <body>
         <nav class="container" id="nav">
             <ul class="nav nav-tabs">
-                <li<?php echo $url->segments() ? '' : ' class="active"'?>><a href="<?php echo $url->link()?>">首页</a></li>
+                <li<?php echo $url->segments() ? '' : ' class="active"'?>><a data-target="#" href="<?php echo $url->link()?>">首页</a></li>
                 <?php
                 foreach ($categories as $firstCategory) {
                     if ($categoryEnglishName == $firstCategory->englishName) {
@@ -44,7 +44,7 @@ EOT;
                 <li class="pull-right">
                     <form class="form-search" action="<?php echo $url->link('search')?>">
                         <div class="input-append">
-                            <input class="span2 search-query" name="q" value="<?php echo $url->get('q')?>" type="search">
+                            <input class="span2 search-query" placeholder="输入关键字" name="q" value="<?php echo $url->get('q')?>" type="search">
                             <button class="btn" type="submit">Search</button>
                         </div>
                     </form>
@@ -74,26 +74,21 @@ EOT;
         </nav>
         <div class="container">
             <?php
-            if ($url->segments()) {
+            if (!empty($breadcrumb)) {
+                $breadCount = count($breadcrumb);
             ?>
             <ul class="breadcrumb">
-                <li><a href="<?php echo $url->link()?>">首页</a> <span class="divider">/</span></li>
                 <?php
-                if (!is_null($currFirstCategory) && !is_null($currSecondCategory)) {
-                ?>
-                <li><a href="<?php echo $url->link($currFirstCategory->englishName)?>"><?php echo $currFirstCategory->name;?></a> <span class="divider">/</span></li>
-                <?php
-                } elseif (!is_null($currFirstCategory) && is_null($currSecondCategory)) {
-                ?>
-                <li class="active"><?php echo $currFirstCategory->name?></li>
-                <?php
-                }
-                ?>
-                <?php
-                if (!is_null($currSecondCategory)) {
-                ?>
-                <li class="active"><?php echo $currSecondCategory->name?></li>
-                <?php
+                $k = 1;
+                foreach ($breadcrumb as $breadText => $breadLink) {
+                    if ($k < $breadCount) {
+                    echo <<<EOT
+                    <li><a href="{$url->link($breadLink)}">{$breadText}</a><span class="divider">/</span></li>
+EOT;
+                    } else {
+                        echo "<li class=\"active\">{$breadText}</li>";
+                    }
+                    $k++;
                 }
                 ?>
             </ul>

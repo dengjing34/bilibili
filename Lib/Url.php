@@ -250,6 +250,15 @@ class Url {
         $this->segments = array_filter(explode('/', current(explode('?', $this->uri()))));
         return $this->segments;
     }
+
+    /**
+     * 通过上传文件路径生成文件url
+     * @param string $file 上传文件的路径
+     * @return string
+     */
+    public function fileUrl($file) {
+        return 'http://' . $this->host . UPLOAD_PATH . $file;
+    }
 }
 
 ?>

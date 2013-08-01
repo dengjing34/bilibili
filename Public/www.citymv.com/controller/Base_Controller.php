@@ -32,6 +32,7 @@ abstract class Base_Controller extends \Lib\Controller{
             'categories' => $this->getCategories(),
             'categoryEnglishName' => $categoryEnglishName,
             'title' => $this->getTitle(),
+            'breadcrumb' => $this->getBreadcrumb(),
         ));
         $header->setPrint(true)->render('header');
         parent::render($data, $print, $tpl);
@@ -75,6 +76,28 @@ abstract class Base_Controller extends \Lib\Controller{
             }
             foreach ($first->children as $second) {
                 if ($second->englishName == $englishName) {
+                    $result = $second;
+                    break 2;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * 通过id在apc中遍历查找对应的分类
+     * @param int $id 分类id
+     * @return \Lib\Mysql\Category 分类对象 找不到返回false
+     */
+    protected function loadCategoryById($id) {
+        $result = false;
+        foreach ($this->getCategories() as $first) {
+            if ($first->id == $id) {
+                $result = $first;
+                break;
+            }
+            foreach ($first->children as $second) {
+                if ($second->id == $id) {
                     $result = $second;
                     break 2;
                 }

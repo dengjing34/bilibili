@@ -37,6 +37,12 @@ abstract class Controller {
      */
     private $_title_;
 
+    /**
+     * 面包屑
+     * @var array
+     */
+    private $breadcrumb = array();
+
     public function __construct() {
         
     }
@@ -302,6 +308,50 @@ abstract class Controller {
             header('Content-type: application/json;charset=utf-8');
             echo $json;
         }
+    }
+
+    /**
+     * 设置面包屑
+     * @param array $breadcrumb
+     * <pre>
+     * array(
+     * &nbsp;&nbsp;'首页' => '',
+     * &nbsp;&nbsp;'php' => 'php'
+     * )
+     * </pre>
+     * @return \Lib\Controller
+     */
+    protected function setBreadcrumb(array $breadcrumb) {
+        $this->breadcrumb = $breadcrumb;
+        return $this;
+    }
+
+    /**
+     * 往面包屑头部写入数据
+     * @param array $breadcrumb
+     * @return \Lib\Controller
+     */
+    protected function prependBreadcrumb(array $breadcrumb) {
+        $this->breadcrumb = $breadcrumb + $this->breadcrumb;
+        return $this;
+    }
+
+    /**
+     * 往面包屑尾部写入数据
+     * @param array $breadcrumb
+     * @return \Lib\Controller
+     */
+    protected function appendBreadcrumb(array $breadcrumb) {
+        $this->breadcrumb += $breadcrumb;
+        return $this;
+    }
+
+    /**
+     * 获取面包屑顺序
+     * @return array
+     */
+    protected function getBreadcrumb() {
+        return $this->breadcrumb;
     }
 }
 

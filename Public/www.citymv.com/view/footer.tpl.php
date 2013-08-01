@@ -1,13 +1,18 @@
 <?php
 /*@var $this \Lib\View*/
+$url = $this->url();
+$year = date('Y') == '2013' ? '2013' : '2013 - ' . date('Y');
 ?>
 
 
         </div>
+        <footer class="container">
+            &COPY; <?php echo $year;?> <a href="<?php echo $url->link();?>">www.citymv.com</a> All Rights Reserved. Powered by jingd.
+        </footer>
 <?php
 if (isset($appendStatic['js'])) {
     foreach ($appendStatic['js'] as $eachJs) {
-        echo '<script type="text/javascript" src="' . $this->url()->jsUlr($eachJs) . '"/></script>' . "\n";
+        echo '<script type="text/javascript" src="' . $url->jsUlr($eachJs) . '"/></script>' . "\n";
     }
 }
 ?>
