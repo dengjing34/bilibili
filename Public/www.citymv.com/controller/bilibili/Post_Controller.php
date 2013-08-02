@@ -19,7 +19,7 @@ class Post_Controller extends Admin_Controller {
                 $postSearcher->query($field, ${$field});
             }
         }
-        $pageResult = $postSearcher->sort(array('id' => 'desc'))->search();
+        $pageResult = $postSearcher->sort(array('id' => 'desc'))->setPage($url->get('page'))->search();
         $this->render(compact('pageResult', 'q', 'categoryId', 'parentCategoryId'));
     }
 
@@ -51,7 +51,7 @@ class Post_Controller extends Admin_Controller {
 
     public function edit() {
         $this->appendStatic(array(
-            'js' => array('editor/kindeditor-min.js'),
+            'js' => array('editor/kindeditor-min.js', 'prettify/prettify.js'),
         ))->prependTitle('编辑文章');
         $url = $this->url();
         $id = $url->get('id');

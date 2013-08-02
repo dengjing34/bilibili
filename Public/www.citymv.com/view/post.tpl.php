@@ -26,3 +26,8 @@ $url = $this->url();
         ads
     </div>
 </div>
+<script type="text/javascript">
+$(function(){
+    prettyPrint();
+});
+</script>

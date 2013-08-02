@@ -13,8 +13,9 @@ abstract class Base_Controller extends \Lib\Controller{
         parent::__construct();
         $this->prependStatic(array(
             'css' => array('bootstrap.min.css', 'bootstrap-responsive.min.css', 'main.css'),
+            'js' => array('jquery-1.9.1.min.js')
         ))->appendStatic(array(
-            'js' => array('jquery-1.9.1.min.js', 'bootstrap.min.js'),
+            'js' => array('bootstrap.min.js'),
         ))->setTitle('citymv')->setCategories();
     }
 
@@ -33,6 +34,7 @@ abstract class Base_Controller extends \Lib\Controller{
             'categoryEnglishName' => $categoryEnglishName,
             'title' => $this->getTitle(),
             'breadcrumb' => $this->getBreadcrumb(),
+            'metas' => $this->getMeta(),
         ));
         $header->setPrint(true)->render('header');
         parent::render($data, $print, $tpl);

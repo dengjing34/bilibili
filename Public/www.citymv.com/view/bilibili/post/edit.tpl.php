@@ -24,7 +24,7 @@ $url = $this->url();
         }
         ?>
         <label for="content">内容</label>
-        <textarea id="content" name="content" style="width:100%;" rows="15"><?php echo $post->content;?></textarea>
+        <textarea id="content" name="content" style="width:100%;" rows="15"><?php echo htmlspecialchars($post->content);?></textarea>
         <p>
             <button type="submit" class="btn btn-primary">保存</button>
         </p>
@@ -34,9 +34,11 @@ $url = $this->url();
 $(function(){
     KindEditor.ready(function(K) {
             window.editor = K.create('#content', {
-                uploadJson : '/file/editor',
+                cssPath : '<?php echo $url->cssUrl('prettify.css')?>',
+                uploadJson : '<?php echo $url->link('file/editor')?>',
                 allowFileManager : false
             });
+            prettyPrint();
     });
 });
 </script>

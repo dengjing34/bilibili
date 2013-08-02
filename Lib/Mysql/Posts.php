@@ -56,7 +56,7 @@ class Posts extends Data {
      * @return \Lib\Mysql\Posts
      * @throws \Exception
      */
-    public function save() {        
+    public function save() {      
         if (ctype_digit((string)$this->categoryId) && $this->categoryId > 0) {
             $category = new Category();
             try {
@@ -93,6 +93,7 @@ class Posts extends Data {
                 $this->updatedTime = time();
             }
         }
+//        $this->content = htmlspecialchars($this->content, ENT_QUOTES, 'UTF-8');
         return parent::save();
     }
 
@@ -234,6 +235,23 @@ class Posts extends Data {
      */
     public function getPics() {
         return ($pics = $this->get('pics')) ? explode(',', $pics) : array();
+    }
+
+    /**
+     * 获取meta的keywords 由tags组成
+     * @return string
+     */
+    public function metaKeywords() {
+        return str_replace(' ', ',', $this->tags);
+    }
+
+    /**
+     * 获取meta的description 不包括换行和多个空格
+     * @param int $length 字符长度,默认50
+     * @return string
+     */
+    public function metaDescription($length = 150) {
+        return mb_strimwidth(preg_replace(array("/\n/", '/\s+|&nbsp;|"/'), array('', ' '), strip_tags($this->content)), 0, $length, '...', 'UTF-8');
     }
 }
 

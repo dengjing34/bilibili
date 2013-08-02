@@ -24,7 +24,7 @@
 #nav .tab-content a{padding:0 5px;}
 ul.list{margin-left:1px;background:#f4f4f4;border-radius:5px;padding:6px;margin-right:9px;list-style:none;margin-bottom:40px;}
 ul.list li{margin-left:0px;}
-ul.list li.content{text-indent:28px;}
+ul.list li.content{text-indent:28px;overflow:hidden;}
 ul.list li.date{color:#666;position:relative;}
 ul.list a.cat-label{font-size:12px;background:#ed3a09;position:absolute;right:-6px;color:#fff;padding:0px 4px;border-radius:3px 0 0 3px;text-decoration:none;opacity:0.8;}
 footer{border-top:1px solid #ed3a09;font-size:12px;color:#959595;padding:10px 0;margin-top:10px;}

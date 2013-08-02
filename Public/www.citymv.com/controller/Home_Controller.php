@@ -20,12 +20,12 @@ class Home_Controller extends Base_Controller{
         $url = $this->url();
         $categoryEnglishName = $url->get('categoryEnglishName');
         $category = $this->loadCategoryByEnglishName($categoryEnglishName);
-        $this->prependBreadcrumb(array($category->name => $categoryEnglishName));
-        if ($category->parentId > 0) {
-            $parentCategory = $this->loadCategoryById($category->parentId);
-            $this->prependBreadcrumb(array($parentCategory->name => $parentCategory->englishName));
-        }
         if ($category) {
+        $this->prependBreadcrumb(array($category->name => $categoryEnglishName));
+            if ($category->parentId > 0) {
+                $parentCategory = $this->loadCategoryById($category->parentId);
+                $this->prependBreadcrumb(array($parentCategory->name => $parentCategory->englishName));
+            }
             if (isset($category->children)) {
                 $postsSearcher->query('parentCategoryId', $category->id);
             } else {
@@ -50,7 +50,10 @@ class Home_Controller extends Base_Controller{
             $post->load($id);
             $this->setBreadcrumb(array($post->title => $post->postUrl()))
                     ->prependBreadcrumb(array($post->categoryName => $post->categoryEnglishName))
-                    ->prependTitle($post->title . ' - ' . $post->categoryName . ' - ');
+                    ->setMeta(array('keywords' => $post->metaKeywords(), 'description' => $post->metaDescription()))
+                    ->prependTitle($post->title . ' - ' . $post->categoryName . ' - ')
+                    ->prependStatic(array('css' => array('prettify.css')))
+                    ->appendStatic(array('js' => array('prettify/prettify.js')));
             if ($post->parentCategoryId > 0) {
                 $this->prependBreadcrumb(array($post->parentCategoryName => $post->parentCategoryEnglishName));
             }

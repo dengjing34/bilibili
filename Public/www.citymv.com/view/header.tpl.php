@@ -12,6 +12,9 @@ $currFirstCategory = $currSecondCategory = null;
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php
+        foreach ($metas as $metaName => $metaContent) {
+            echo "<meta name=\"{$metaName}\" content=\"{$metaContent}\">\n";
+        }
         if (isset($prependStatic['css'])) {
             foreach ($prependStatic['css'] as $eachCss) {
                 echo '<link rel="stylesheet" href="' . $this->url()->cssUrl($eachCss) . '">' . "\n";
