@@ -19,7 +19,7 @@ $url = $this->url();
         echo $tagsHtml;
         ?>
         <div class="detail">
-            <?php echo $post->content;?>
+            <?php echo $post->picCount > 0 ? $url->convertImageUrl($post->content) : $post->content;?>
         </div>
     </div>
     <div class="span2">

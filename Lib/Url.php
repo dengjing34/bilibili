@@ -259,6 +259,19 @@ class Url {
     public function fileUrl($file) {
         return 'http://' . $this->host . UPLOAD_PATH . $file;
     }
+
+    /**
+     * 把内容中有上传图片的地址转换成全路径
+     * @param string $content 要转换的内容
+     * @return string
+     */
+    public function convertImageUrl($content) {
+        if ($content) {
+            $uploadPath = UPLOAD_PATH;
+            $content = preg_replace('@<img src="' . $uploadPath . '@i', '<img src="http://' . $this->host . $uploadPath, $content);
+        }
+        return $content;
+    }
 }
 
 ?>

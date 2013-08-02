@@ -37,7 +37,8 @@ abstract class Base_Controller extends \Lib\Controller{
         $header->setPrint(true)->render('header');
         parent::render($data, $print, $tpl);
         $footer = new \Lib\View(array(
-            'appendStatic' => $this->getAppentStatic()
+            'appendStatic' => $this->getAppentStatic(),
+            'analyticsCodes' => $this->analyticsCodes(),
         ));
         $footer->setPrint(true)->render('footer');
     }
@@ -104,6 +105,42 @@ abstract class Base_Controller extends \Lib\Controller{
             }
         }
         return $result;
+    }
+
+    /**
+     * 统计代码,本地环境不会出现
+     * @return string
+     */
+    protected function analyticsCodes() {
+        try {
+            $onlineIps = \Lib\Config::load('ip.' . SERVER_IP_LIST);
+        } catch (\Exception $e) {
+            $onlineIps = array();
+        }
+        $codes = '';
+        if (in_array($_SERVER['SERVER_ADDR'], $onlineIps)) {
+            $codes = <<<EOT
+<script>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?4432751931a37ee478ddbfa0de51a3c5";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-23785848-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+EOT;
+        }
+        return $codes;
     }
 }
 

@@ -30,6 +30,7 @@ ul.list a.cat-label{font-size:12px;background:#ed3a09;position:absolute;right:-6
 footer{border-top:1px solid #ed3a09;font-size:12px;color:#959595;padding:10px 0;margin-top:10px;}
 dl.listing{background:#f4f4f4;border-radius:5px;padding:6px;}
 dl.listing dd{margin-left:0px;}
+dl.listing em{color:#ed3a09;}
 dl.listing dd.content{text-indent:28px;}
 dl.listing .date{color:#666;}
 dl.listing dd.pics{padding:10px;}

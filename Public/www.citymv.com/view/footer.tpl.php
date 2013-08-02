@@ -23,5 +23,6 @@ $(function(){
    });
 });
 </script>
+<?php echo $analyticsCodes;?>
     </body>
 </html>

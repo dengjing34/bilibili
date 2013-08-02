@@ -1,0 +1,21 @@
+User-agent: HuaweiSymantecSpider
+Disallow: /
+
+User-agent: JikeSpider
+Disallow: /
+
+User-agent: Yahoo! Slurp China
+Disallow: /
+
+User-agent: twiceler
+Disallow: /
+
+User-agent: voyager
+Disallow: /
+
+User-agent: YoudaoBot
+Disallow: /
+
+User-agent: *
+Allow: /
+Disallow: /bilibili/

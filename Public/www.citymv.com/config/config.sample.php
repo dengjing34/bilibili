@@ -18,6 +18,10 @@ define('UPLOAD_PATH', '/files/');
 /**
  * 编辑器上传图片需要做的裁剪和缩略图配置
  */
-define('IMAGICK_EDITOR', 'imagick_editor');//
+define('IMAGICK_EDITOR', 'imagick_editor');
+/**
+ * 各台webserver的ip地址,不在这些ip范围的不加载统计代码
+ */
+define('SERVER_IP_LIST', 'server_ip_list');
 require_once BOOT_PATH . 'bootstrap.php';
 ?>
