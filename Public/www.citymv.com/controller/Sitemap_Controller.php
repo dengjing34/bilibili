@@ -1,7 +1,7 @@
 <?php
 namespace Controller;
 class SiteMap_Controller extends \Lib\Controller{
-    const PAGE_LIMIT = 2;
+    const PAGE_LIMIT = 1000;
 
     public function __construct() {
         parent::__construct();
