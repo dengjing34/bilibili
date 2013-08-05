@@ -353,6 +353,16 @@ abstract class Controller {
     protected function getBreadcrumb() {
         return $this->breadcrumb;
     }
+
+    /**
+     * 输出xml数据
+     * @param type $xml
+     */
+    protected function showXml($xml) {
+        header('Content-type: text/xml;charset=utf-8');
+        echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+        echo $xml;
+    }
 }
 
 ?>

@@ -26,7 +26,7 @@ class Post_Controller extends Admin_Controller {
     public function add() {
         $url = $this->url();
         $this->appendStatic(array(            
-            'js' => array('editor/kindeditor-min.js'),
+            'js' => array('editor/kindeditor-min.js', 'prettify/prettify.js'),
         ));
         $post = new \Lib\Mysql\Posts();
         if ($url->isPostMethod()) {

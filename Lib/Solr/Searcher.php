@@ -17,6 +17,11 @@ abstract class Searcher {
     private $facetField = array(), $facetQuery = array(), $facetLimit = 100, $facetSort = self::FACET_SORT_COUNT, $facetOffset = 0, $facetMincount = 0;
     private $facetDateQuery = array(), $facetRangeQuery = array();
     /**
+     * 是否需要根据solr找到的id去mysql或memcache中读取出对象
+     * @var boolean
+     */
+    private $loadObject = true;
+    /**
      * 是否highlight
      * @var boolean
      */
@@ -132,6 +137,9 @@ abstract class Searcher {
      * @return MysqlData
      */
     private function dbObject() {
+        if ($this->getLoadObject() == false) {
+            return null;
+        }
         if (self::$dbs[$this->className()] instanceof \Lib\Mysql\Data) {
             return self::$dbs[$this->className()];
         } elseif (!is_null(self::$dbs[$this->className()])) {
@@ -1085,6 +1093,24 @@ abstract class Searcher {
      */
     private function slaveCore() {
         return "{$this->slave()}{$this->coreName()}/";
+    }
+
+    /**
+     * 设置是否在search()的时候从mysql或memcache中读取数据对象
+     * @param boolean $flag true为需要读取, false为不需要
+     * @return \Lib\Solr\Searcher
+     */
+    public function setLoadObject($flag) {
+        $this->loadObject = $flag;
+        return $this;
+    }
+
+    /**
+     * search()的时候是否要从mysql或memcache中读取数据对象
+     * @return boolean true为需要读取, false为不读取
+     */
+    public function getLoadObject() {
+        return $this->loadObject;
     }
 }
 

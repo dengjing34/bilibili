@@ -93,7 +93,6 @@ class Posts extends Data {
                 $this->updatedTime = time();
             }
         }
-//        $this->content = htmlspecialchars($this->content, ENT_QUOTES, 'UTF-8');
         return parent::save();
     }
 

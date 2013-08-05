@@ -36,9 +36,11 @@ $url = $this->url();
 $(function(){
     KindEditor.ready(function(K) {
             window.editor = K.create('#content', {
-                uploadJson : '/file/editor',
+                cssPath : '<?php echo $url->cssUrl('prettify.css')?>',
+                uploadJson : '<?php echo $url->link('file/editor')?>',
                 allowFileManager : false
             });
+            prettyPrint();
     });
 });
 </script>
