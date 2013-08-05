@@ -19,3 +19,5 @@ Disallow: /
 User-agent: *
 Allow: /
 Disallow: /bilibili/
+
+Sitemap: http://www.84fun.com/sitemap/sitemap_index.xml
