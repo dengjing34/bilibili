@@ -20,4 +20,4 @@ User-agent: *
 Allow: /
 Disallow: /bilibili/
 
-Sitemap: http://www.84fun.com/sitemap/sitemap_index.xml
+Sitemap: http://www.citymv.com/sitemap_index.xml
