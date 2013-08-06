@@ -47,7 +47,7 @@ EOT;
                 <li class="pull-right">
                     <form class="form-search" action="<?php echo $url->link('search')?>">
                         <div class="input-append">
-                            <input class="span2 search-query" placeholder="输入关键字" name="q" value="<?php echo $url->get('q')?>" type="search">
+                            <input class="span2 search-query" placeholder="输入关键字" name="q" value="<?php echo htmlspecialchars($url->get('q'))?>" type="search">
                             <button class="btn" type="submit">Search</button>
                         </div>
                     </form>

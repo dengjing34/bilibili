@@ -32,7 +32,7 @@ EOT;
                 <fieldset>
                     <legend>管理登录</legend>
                     <label>
-                        <input type="text" required="true" value="<?php echo $nickname;?>" name="nickname" placeholder="您的昵称">
+                        <input type="text" required="true" value="<?php echo htmlspecialchars($nickname);?>" name="nickname" placeholder="您的昵称">
                     </label>
                     <label>
                         <input type="password" required="true" name="password" placeholder="您的密码">
