@@ -16,7 +16,7 @@ abstract class Base_Controller extends \Lib\Controller{
             'js' => array('jquery-1.9.1.min.js')
         ))->appendStatic(array(
             'js' => array('bootstrap.min.js'),
-        ))->setTitle('citymv')->setCategories();
+        ))->setTitle('DJ的博客')->setCategories();
     }
 
     /**
