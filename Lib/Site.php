@@ -124,6 +124,10 @@ class Site {
         if ($this->controller && $this->method && is_file($this->controllerPath)) {
             require_once $this->controllerPath;
             $className = "\Controller\\{$this->controller}";
+            $reflection = new \ReflectionClass($className);
+            if ($reflection->isAbstract()) {
+                $this->pageNotFound();
+            }
             $controller = new $className();
             if (method_exists($controller, $this->method) && is_callable(array($controller, $this->method))) {
                 $controller->init($this)->{$this->method}();
